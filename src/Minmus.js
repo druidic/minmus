@@ -58,11 +58,39 @@ function Minmus() {
     main: main
   }
 
-  function main(event) {
-    if (event.type === 'startup') {
+  function render(updatedRecords) {
+    if (mode === 'edit') {
       return {
-        screen: [' │ █']
+        screen: lines
+          .map(truncate(60))
+          .map(prefix(' │ '))
+          .map(at(cursor, suffix('█')))
       }
+    } else if (mode === 'semicolon') {
+      return {
+        screen: lines
+          .map(truncate(60))
+          .map(at(cursor, prefix('▒│ '), prefix(' │ ')))
+          .map(at(cursor, suffix('▒')))
+      }
+    } else if (mode === 'command') {
+      return {
+        screen: lines
+          .map(truncate(60))
+          .map(at(cursor, prefix('█│ '), prefix(' │ '))),
+        records: updatedRecords
+      }
+    }
+  }
+
+  function main(event, records) {
+    var updatedRecords = {}
+
+    if (event.type === 'startup') {
+      if (records.read('myfile')) {
+        lines = records.read('myfile').split('\n')
+      }
+      return render()
     }
 
     if (event.type === 'keyDown') {
@@ -131,30 +159,14 @@ function Minmus() {
             lines = remove(cursor--, lines)
             if (cursor < 0) cursor = 0
             if (lines.length === 0) lines = ['']
+            break
+          case 's':
+            updatedRecords['myfile'] = lines.join('\n')
+            break
         }
       }
 
-      if (mode === 'edit') {
-        return {
-          screen: lines
-            .map(truncate(60))
-            .map(prefix(' │ '))
-            .map(at(cursor, suffix('█')))
-        }
-      } else if (mode === 'semicolon') {
-        return {
-          screen: lines
-            .map(truncate(60))
-            .map(at(cursor, prefix('▒│ '), prefix(' │ ')))
-            .map(at(cursor, suffix('▒')))
-        }
-      } else if (mode === 'command') {
-        return {
-          screen: lines
-            .map(truncate(60))
-            .map(at(cursor, prefix('█│ '), prefix(' │ ')))
-        }
-      }
+      return render(updatedRecords)
     }
 
     if (event.type === 'keyUp') {
@@ -181,12 +193,7 @@ function Minmus() {
         }
       }
 
-      return {
-        screen: lines
-          .map(truncate(60))
-          .map(prefix(' │ '))
-          .map(at(cursor, suffix('█')))
-      }
+      return render()
     }
 
     return null
