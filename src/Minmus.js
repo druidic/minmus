@@ -105,8 +105,7 @@ function Minmus() {
                 lines[cursor] = lines[cursor].slice(0, lines[cursor].length - 1)
               } else {
                 lines = remove(cursor--, lines)
-                if (lines.length === 0) lines = ['']
-                if (cursor < 0) cursor = 0
+                fixCursor()
               }
 
               backspaceHeldFrames = 1
@@ -157,8 +156,7 @@ function Minmus() {
             break
           case 'd':
             lines = remove(cursor--, lines)
-            if (cursor < 0) cursor = 0
-            if (lines.length === 0) lines = ['']
+            fixCursor()
             break
           case 's':
             updatedRecords['myfile'] = lines.join('\n')
@@ -188,8 +186,7 @@ function Minmus() {
           lines[cursor] = lines[cursor].slice(0, lines[cursor].length - 1)
         } else {
           lines = remove(cursor--, lines)
-          if (lines.length === 0) lines = ['']
-          if (cursor < 0) cursor = 0
+          fixCursor()
         }
       }
 
@@ -197,5 +194,10 @@ function Minmus() {
     }
 
     return null
+  }
+
+  function fixCursor() {
+    if (lines.length === 0) lines = ['']
+    if (cursor < 0) cursor = 0
   }
 }
