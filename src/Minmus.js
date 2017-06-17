@@ -58,7 +58,7 @@ function Minmus() {
     main: main
   }
 
-  function render(updatedRecords) {
+  function render(updatedRecords, toPrint) {
     if (mode === 'edit') {
       return {
         screen: lines
@@ -78,13 +78,15 @@ function Minmus() {
         screen: lines
           .map(truncate(60))
           .map(at(cursor, prefix('█│ '), prefix(' │ '))),
-        records: updatedRecords
+        records: updatedRecords,
+        print: toPrint
       }
     }
   }
 
   function main(event, records) {
     var updatedRecords = {}
+    var toPrint = null
 
     if (event.type === 'startup') {
       if (records.read('myfile')) {
@@ -161,10 +163,15 @@ function Minmus() {
           case 's':
             updatedRecords['myfile'] = lines.join('\n')
             break
+          case 'p':
+            toPrint = '<code><pre>'
+              + lines.join('\n')
+              + '</pre></code>'
+            break
         }
       }
 
-      return render(updatedRecords)
+      return render(updatedRecords, toPrint)
     }
 
     if (event.type === 'keyUp') {

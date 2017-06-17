@@ -42,6 +42,8 @@ type any of the following command keys:
 - **D** deletes the line at the cursor
 - **S** saves the file
 - **I** inserts a line above the cursor
+- **P** "prints" your text to a new browser tab, where you
+  can copy it or save it to disk.
 
 What if you don't want to go into command mode, but instead
 just want to type a semicolon? You can do it by pressing
