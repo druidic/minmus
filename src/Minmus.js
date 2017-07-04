@@ -108,15 +108,8 @@ function Minmus() {
               shift = true
               break
             case 'backspace':
-              if (lines[cursor].length > 0) {
-                lines[cursor] = lines[cursor].slice(0, lines[cursor].length - 1)
-              } else {
-                lines = remove(cursor--, lines)
-                fixCursor()
-              }
-
+              backspace()
               backspaceHeldFrames = 1
-
               break
             case 'enter':
               lines = insert('', ++cursor, lines)
@@ -196,12 +189,7 @@ function Minmus() {
 
     if (event.type === 'clock' && mode === 'edit' && backspaceHeldFrames) {
       if (backspaceHeldFrames++ > 3) {
-        if (lines[cursor].length > 0) {
-          lines[cursor] = lines[cursor].slice(0, lines[cursor].length - 1)
-        } else {
-          lines = remove(cursor--, lines)
-          fixCursor()
-        }
+        backspace()
       }
 
       keepCursorOnScreen()
@@ -209,6 +197,15 @@ function Minmus() {
     }
 
     return null
+  }
+
+  function backspace() {
+    if (lines[cursor].length > 0) {
+      lines[cursor] = lines[cursor].slice(0, lines[cursor].length - 1)
+    } else {
+      lines = remove(cursor--, lines)
+      fixCursor()
+    }
   }
 
   function fixCursor() {

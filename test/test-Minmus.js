@@ -5,6 +5,29 @@ describe('Minmus', function() {
     expect(app.getScreen()[0]).toBe(' │ a█')
   })
 
+  it('backspaces text', function() {
+    var app = AppController(Minmus())
+    app.input('ab')
+    app.pressKey(8)
+    expect(app.getScreen()[0]).toBe(' │ a█')
+  })
+
+  it('backspaces across newlines', function() {
+    var app = AppController(Minmus())
+    app.input('ab\n')
+    app.pressKey(8)
+    app.pressKey(8)
+    expect(app.getScreen()[0]).toBe(' │ a█')
+  })
+
+  it('backspaces when the backspace key is held', function() {
+    var app = AppController(Minmus())
+    app.input('ab\n')
+    app.pressKey(8)
+    app.wait(10)
+    expect(app.getScreen()[0]).toBe(' │ █')
+  })
+
   it('does not update on clock events when no key is held', function() {
     var m = Minmus()
 
