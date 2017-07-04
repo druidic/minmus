@@ -50,6 +50,7 @@ function at(indexToTransform, transformation, _default) {
 function Minmus() {
   var lines = ['']
   var cursor = 0
+  var scrollPos = 0
   var shift = false
   var mode = 'edit'
   var backspaceHeldFrames = 0
@@ -59,25 +60,29 @@ function Minmus() {
   }
 
   function render(updatedRecords, toPrint) {
+    var screenLineWithCursor = cursor - scrollPos
     if (mode === 'edit') {
       return {
         screen: lines
+          .slice(scrollPos)
           .map(truncate(60))
           .map(prefix(' │ '))
-          .map(at(cursor, suffix('█')))
+          .map(at(screenLineWithCursor, suffix('█')))
       }
     } else if (mode === 'semicolon') {
       return {
         screen: lines
+          .slice(scrollPos)
           .map(truncate(60))
-          .map(at(cursor, prefix('▒│ '), prefix(' │ ')))
-          .map(at(cursor, suffix('▒')))
+          .map(at(screenLineWithCursor, prefix('▒│ '), prefix(' │ ')))
+          .map(at(screenLineWithCursor, suffix('▒')))
       }
     } else if (mode === 'command') {
       return {
         screen: lines
+          .slice(scrollPos)
           .map(truncate(60))
-          .map(at(cursor, prefix('█│ '), prefix(' │ '))),
+          .map(at(screenLineWithCursor, prefix('█│ '), prefix(' │ '))),
         records: updatedRecords,
         print: toPrint
       }
@@ -115,6 +120,7 @@ function Minmus() {
               break
             case 'enter':
               lines = insert('', ++cursor, lines)
+              keepCursorOnScreen()
               break
           }
         } else {
@@ -171,6 +177,7 @@ function Minmus() {
         }
       }
 
+      keepCursorOnScreen()
       return render(updatedRecords, toPrint)
     }
 
@@ -197,6 +204,7 @@ function Minmus() {
         }
       }
 
+      keepCursorOnScreen()
       return render()
     }
 
@@ -206,5 +214,17 @@ function Minmus() {
   function fixCursor() {
     if (lines.length === 0) lines = ['']
     if (cursor < 0) cursor = 0
+  }
+
+  function keepCursorOnScreen() {
+    if (scrollPos < cursor - 32 + 5) {
+      scrollPos = cursor - 32 + 5
+    }
+    if (scrollPos > cursor - 5) {
+      scrollPos = cursor - 5
+    }
+    if (scrollPos < 0) {
+      scrollPos = 0
+    }
   }
 }
