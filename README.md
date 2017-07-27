@@ -37,8 +37,9 @@ into *command mode*.
 To get there, press the semicolon key (`;`). Then you can
 type any of the following command keys:
 
-- **J** and **K** move the cursor up and down
 - **L** goes back into edit mode
+- **J** and **K** move the cursor up and down
+- **B** and **T** move to the bottom or top of the document
 - **D** deletes the line at the cursor
 - **S** saves the file
 - **I** inserts a line above the cursor

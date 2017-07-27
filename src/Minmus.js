@@ -167,6 +167,12 @@ function Minmus() {
               + lines.join('\n')
               + '</pre></code>'
             break
+          case 'b':
+            cursor = lines.length - 1
+            break
+          case 't':
+            cursor = 0
+            break
         }
       }
 
